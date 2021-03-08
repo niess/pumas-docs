@@ -7,5 +7,5 @@
     "prefix": "pumas_",
     "output-repository": "docs",
     "output-branch": "master",
-    "output-path": "docs"
+    "output-path": "docs/docs/api"
 }
