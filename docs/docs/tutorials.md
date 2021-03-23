@@ -199,35 +199,34 @@ allow to customise the transport:
 | **mode.direction**    | [enum pumas\_mode][PUMAS_MODE]    | Direction of the Monte Carlo flow. Default is `PUMAS_MODE_FORWARD`. Set this to `PUMAS_MODE_BACKWARD` for a reverse Monte Carlo. {: .justify} |
 | **mode.scattering**   | [enum pumas\_mode][PUMAS_MODE]    | Algorithm for the simulation of the scattering. Default is `PUMAS_MODE_FULL_SPACE`. In order to neglect any transverse scattering set this to `PUMAS_MODE_LONGITUDINAL` instead. {: .justify} |
 | **event**             | [`enum pumas_event`][PUMAS_EVENT] | The end conditions for the transport. Default is `PUMAS_EVENT_NONE`. {: .justify} |
-| **limit.kinetic**     | `double`                          | The minimum kinetic energy for forward transport, or the maximum one for backward transport, in GeV. {: .justify} |
+| **limit.energy**      | `double`                          | The menergykinetic energy for forward transport, or the maximum one for backward transport, in GeV. {: .justify} |
 | **limit.distance**    | `double`                          | The maximum travelled distance, in m. {: .justify} |
 | **limit.grammage**    | `double`                          | The maximum travelled grammage, in kg/m^2. {: .justify} |
 | **limit.time**        | `double`                          | The maximum travelled proper time, in m/c. {: .justify} |
 
 [PUMAS_MODE]: https://niess.github.io/pumas-docs/#HEAD/type/pumas_mode
 
-Each simulation context also requires the user to supply a pseudo random stream.
-It is the user's responsibility to ensure that the random stream is thread safe,
-if multiple simulation contexts are used simultaneously. The random stream is
-supplied by providing a callback generating a pseudo random number in `[0,1]`,
-uniformly. Below is an example of context creation with a basic (not thread
-safe) error stream. The context is configured for an hybrid energy loss scheme
-without transverse transport, i.e. à la
-[MUM](https://journals.aps.org/prd/abstract/10.1103/PhysRevD.64.074015). For
-the sake of clarity errors are not handled.
+By default each simulation context ships with its own pseudo random stream based
+on a Mersenne Twister algorithm seeded from the OS, e.g. from `/dev/urandom` on
+UNIX. A specific random seed can be provided with the
+[`pumas_context_random_seed_set`][API_14] function. The default pseudo random
+engine can also be overriden by providing an alternative
+[`pumas_random_cb`][PUMAS_RANDOM_CB] to the simulation context generating a
+pseudo random number in `[0,1]` uniformly.  Then, it is the user's
+responsibility to ensure that the random stream is thread safe if multiple
+simulation contexts are used simultaneously.
+{: .justify}
+
+Below is an example of context creation with the built-in pseudo random engine.
+The context is configured for an hybrid energy loss scheme without transverse
+transport, i.e. à la
+[MUM](https://journals.aps.org/prd/abstract/10.1103/PhysRevD.64.074015). For the
+sake of clarity errors are not handled.
 {: .justify}
 
 
     #include "pumas.h"
     #include <stdlib.h>
-
-    /* A basic Pseudo Random Number Generator (PRNG) providing a uniform
-     * distribution over [0, 1]
-     */
-    static double uniform01(struct pumas_context * context)
-    {
-            return rand() / (double)RAND_MAX;
-    }
 
     int main()
     {
@@ -244,9 +243,6 @@ the sake of clarity errors are not handled.
         context->mode.energy_loss = PUMAS_MODE_HYBRID;
         context->mode.scattering = PUMAS_MODE_LONGITUDINAL;
 
-        /* Provide a PRNG for the Monte-Carlo simulation */
-        context->random = &uniform01;
-
         /* Release the allocated memory */
         pumas_context_destroy(&context);
         pumas_physics_destroy(&physics);
@@ -256,8 +252,10 @@ the sake of clarity errors are not handled.
 
 [API_10]: api/index.html##HEAD/group/context/pumas_context_create
 [API_11]: api/index.html##HEAD/group/context/pumas_context_destroy
+[API_14]: api/index.html##HEAD/group/context/pumas_context_random_seed_set
 [PUMAS_CONTEXT]: api/index.html##HEAD/type/pumas_context
 [PUMAS_EVENT]: api/index.html##HEAD/type/pumas_event
+[PUMAS_RANDOM_CB]: api/index.html##HEAD/group/callback/pumas_random_cb
 </div>
 
 
@@ -273,15 +271,21 @@ this structure in a larger one.
 
 Prior to any usage the particle state must be initialised. One has to provide an
 electric charge, a kinetic energy, a Monte-Carlo weight and a starting position
-and direction. For example, below is an example of static initialisation:
+and momentum direction. For example, below is an example of static
+initialisation:
 {: .justify}
 
     struct pumas_state state = {
         .charge = -1.,
-        .kinetic = 1E+01,
+        .energy = 1E+01,
         .weight = 1.,
         .position = { 0., 0., 10. }
         .direction = { 0., 0., -1. } };
+
+!!! warning
+    The state direction must be a unit vector otherwise PUMAS will return an
+    error when attempting to transport the particle.
+    {: .justify}
 
 In addition, during the simulation, the Monte-Carlo state carries information on
 the traveled distance and grammage, and on the spent proper time.
@@ -311,7 +315,7 @@ The [`pumas_context_transport`][API_12] call returns if:
 *  the particle decays (if enabled),
    {: .justify}
 
-*  an error occurs.
+*  an error occurs, e.g. a non unit direction was provided.
    {: .justify}
 
 !!! note
@@ -324,7 +328,7 @@ Limits can be set on the particle traveled distance or grammage, on its
 spent proper time or on its kinetic energy. This is done per simulation stream
 by setting the `event` flag of the [`pumas_context`][PUMAS_CONTEXT] to one (or a
 combination) of `PUMAS_EVENT_LIMIT_DISTANCE`, `PUMAS_EVENT_LIMIT_GRAMMAGE`,
-`PUMAS_EVENT_LIMIT_KINETIC` or `PUMAS_EVENT_LIMIT_TIME`.  In addition a strictly
+`PUMAS_EVENT_LIMIT_ENERGY` or `PUMAS_EVENT_LIMIT_TIME`.  In addition a strictly
 positive value must be provided for the corresponding `limit` field of the
 simulation context. For example the code below sets a limit of 1 km on
 the particle traveled distance:
@@ -358,23 +362,23 @@ depending on the particle kinetic energy.
         ...
 
         /* Enable kinetic energy limits */
-        context->event |= PUMAS_EVENT_LIMIT_KINETIC;
+        context->event |= PUMAS_EVENT_LIMIT_ENERGY;
 
         /* Transport the Monte-Carlo state */
-        const double kinetic_min = 1E-03;
-        while (state.kinetic > kinetic_min) {
-            if (state.kinetic < 1E+02 + FLT_EPSILON) {
+        const double energy_min = 1E-03;
+        while (state.energy > energy_min) {
+            if (state.energy < 1E+02 + FLT_EPSILON) {
                 /* Below 100 GeV do a detailed simulation
                  * à la Geant4, including transverse transport
                  */
                 context->mode.energy_loss = PUMAS_MODE_DETAILED;
                 context->mode.scattering = PUMAS_MODE_FULL_SPACE;
-                context->limit.kinetic = kinetic_min;
+                context->limit.energy = energy_min;
             } else {
                 /* Do a fast simulation à la MUM */
                 context->mode.energy_loss = PUMAS_MODE_HYBRID;
                 context->mode.scattering = PUMAS_MODE_LONGITUDINAL;
-                context->limit.kinetic = 1E+02;
+                context->limit.energy = 1E+02;
             }
             pumas_context_transport(context, &state, NULL, NULL);
         }
@@ -550,11 +554,11 @@ a log uniform sampling.
         ...
 
         /* Randomise the final state kinetic energy */
-        const double kinetic_min = 1E-03;
-        const double kinetic_max = 1E+06;
-        const double r = log(kinetic_max / kinetic_min);
-        state.kinetic = kinetic_min * exp(r * context->random(context));
-        state.weight = state.kinetic * r; /* 1 / PDF_{gen}(k_f) */
+        const double energy_min = 1E-03;
+        const double energy_max = 1E+06;
+        const double r = log(energy_max / energy_min);
+        state.energy = energy_min * exp(r * context->random(context));
+        state.weight = state.energy * r; /* 1 / PDF_{gen}(k_f) */
 
         /* Backward transport the Monte-Carlo state. Note that at exit the
          * Monte-Carlo weight is updated by the Jacobian BMC factor, J_{i,f}.
@@ -562,7 +566,7 @@ a log uniform sampling.
         pumas_context_transport(context, &state, NULL, NULL);
 
         /* Sample the primary flux */
-        state.weight *= flux(state.kinetic); /* Phi(k_i) */
+        state.weight *= flux(state.energy); /* Phi(k_i) */
 
         /* Finalise PUMAS */
         ...
