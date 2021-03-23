@@ -405,13 +405,25 @@ a maximum geometric stepping distance, typically the distance to the next
 boundary assuming a straight line propagation. Note that it is not critical to
 provide the exact value. The transport engine will run a bisection search if a
 change of medium is detected. However, providing the exact distance can speed up
-the simulation, if it is _fast enough_ to compute this distance. Note that the
-current *medium* or the *step* distance might not be needed by the transport
-engine in some cases. This is indicated to the user by handling a `NULL` pointer
-for the corresponding property. Therefore one must be cautious to check both
-pointers for `NULL` before assigning to them, as illustrated in the example
-below.
+the simulation, if it is _fast enough_ to compute this distance.
 {: .justify}
+
+!!! note
+    The current *medium* or the *step* distance might not be needed by the
+    transport engine in some cases. This is indicated to the user by handling a
+    `NULL` pointer for the corresponding property. Therefore one must be
+    cautious to check both pointers for `NULL` before assigning to them, as
+    illustrated in the example below.
+    {: .justify}
+
+!!! note
+    In backward Monte Carlo mode the particle is propagated reverse to the state
+    direction. When implementing a [`pumas_medium_cb`][MEDIUM_CB] one must take
+    care to provide a *step* size accordingly, i.e. consistent with the geometry
+    in both forward and backward modes (see e.g. the
+    [geometry.c](https://github.com/niess/pumas/blob/master/examples/geometry.c#L121)
+    example).
+    {: .justify}
 
 A [`pumas_medium`][PUMAS_MEDIUM] is described by a material index and a set of
 local properties. The material must be the same over the whole medium. Its index
