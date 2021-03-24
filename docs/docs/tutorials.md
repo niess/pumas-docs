@@ -432,17 +432,30 @@ can be mapped to the MDF material name using the
 during the initialisation and configuration stage, since the mapping implies
 strings comparisons. The medium local properties are its bulk density and any
 magnetic field. Those are set by a [`pumas_locals_cb`][LOCALS_CB] callback and
-can vary over the medium. The [`pumas_locals_cb`][LOCALS_CB] callback can be
-`NULL` in which case the material default density is used as defined in the MDF
-and the magnetic field is set to zero. If a `pumas_locals_cb` is provided then
-it must return a maximum stepping distance over which one can approximate the
-medium as uniform. Returning a value of zero or less indicates a uniform medium
-e.g. with a non standard density or with a magnetic field.  *Note* that it is an
-error to return zero or less for any position of the medium if at least one area
-is not uniform. Instead one should use two different media even though they have
-the same material. Note also that if a null or negative density is set in the
-`pumas_locals_cb` then the material's default density is used instead.
+can vary **continuously** over the medium. The [`pumas_locals_cb`][LOCALS_CB]
+callback can be `NULL` in which case the material default density is used as
+defined in the MDF and the magnetic field is set to zero. If a `pumas_locals_cb`
+is provided then it must return a maximum stepping distance over which one can
+approximate the medium as uniform. Returning a value of zero or less indicates a
+uniform medium e.g. with a non standard density or with a magnetic field.
 {: .justify}
+
+!!! note
+    If a null or negative density is set in the `pumas_locals_cb` then the
+    material's default density is used instead.
+    {: .justify}
+
+!!! note
+    It is an error to return zero or less for any position of the medium if at
+    least one area is not uniform. Instead one should use two different media
+    even though they have the same material.
+    {: .justify}
+
+!!! notr
+    The `pumas_locals_cb` should not be used to model a non continuous density
+    or magnetic field. Instead this must be modelled by using separate media on
+    both sides of the discontinuity.
+    {: .justify}
 
 !!! warning
     PUMAS does **not** correct the ionisation loss for the density effect if a
