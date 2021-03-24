@@ -58,7 +58,7 @@ to use MDFs as an exchange format for the material properties.
 
 !!! note
     The file
-    [examples/load.c](https://github.com/niess/pumas/blob/master/examples/load.c)
+    [examples/pumas/loader.c](https://github.com/niess/pumas/blob/master/examples/pumas/loader.c)
     provides an example of physics smart initialisation. The initialisation is
     done with [`pumas_physics_load`][API_2] if a binary dump is found. Otherwise
     the initialisation is done from a MDF, using
@@ -107,23 +107,21 @@ binary file.
 <div markdown="1" class="shaded-box fancy">
 ## Error handling
 
-Most PUMAS library functions return a
-[`pumas_return`](api/index.html##HEAD/type/pumas_return)
-code whenever an error could occur. The meaning of the return codes is detailed
-in the online description of each library function.
-{: .justify}
-
-The PUMAS library also provides automatic error management by supplying an error
-handler callback. This is done with the [`pumas_error_handler_set`][API_7]
-function. A brief human readable description of the error is forwarded to the
-handler as well. The following illustrates the corresponding mechanism with a
-basic example.
+By default the PUMAS library is configured to print out to `stderr` whenever an
+error occurs and to exit back to the OS. While this is practical for short
+programs it is anoying when integrating PUMAS in a larger project.  Therefore,
+the user can override the default error handling by providing its own handler
+callback. This is done with the [`pumas_error_handler_set`][API_7] function. A
+brief human readable description of the error is forwarded to the handler. The
+following illustrates the corresponding mechanism with a basic example.
 {: .justify}
 
     #include "pumas.h"
     #include <stdlib.h>
 
-    /* Error handler for PUMAS with a hard exit */
+    /* Error handler for PUMAS with a hard exit. Note that this is actually
+     * the behaviour of the default PUMAS error handler
+     */
     static void error_handler(
         enum pumas_return rc, pumas_function_t * caller, const char * message)
     {
@@ -137,25 +135,22 @@ basic example.
 
     int main()
     {
-        /* Set the error handler callback */
+        /* Set the error handler callback or disable it at all by providing
+         *  a `NULL` pointer instead
+         */
         pumas_error_handler_set(&error_handler);
 
-        /* Initialise the physics from a binary dump */
-        struct pumas_physics * physics;
-        const char * dump_file = "materials/dump";
-        FILE * fid = fopen(dump_file, "rb");
-        if (fid == NULL) {
-            perror(dump_file);
-            exit_gracefully(EXIT_FAILURE);
-        }
-        pumas_physics_load(&physics, fid);
-        fclose(fid);
-
-        /* Release the physics memory */
-        pumas_physics_destroy(&physics);
-
-        exit(EXIT_SUCCESS);
+        /* Do something with PUMAS */
+        ...
     }
+
+!!! note
+    Automatic error handling can be completely disabled by setting the error
+    handler to `NULL`. Note that PUMAS library functions will still return a
+    [`pumas_return`](api/index.html##HEAD/type/pumas_return) code whenever an
+    error occurs. The meaning of the return codes is detailed in the online
+    description of each library function.
+    {: .justify}
 
 !!! note
     In some cases it can be useful to intercept library errors before the error
@@ -163,7 +158,7 @@ basic example.
     function. Afterwards, in order to manually raise the last caught error one
     can call the [`pumas_error_raise`][API_9] function. This mechanism is
     illustrated in the [smart loader
-    example](https://github.com/niess/pumas/blob/master/examples/load.c#L48).
+    example](https://github.com/niess/pumas/blob/master/examples/pumas/loader.c#L48).
     {: .justify}
 
 [API_7]: api/index.html##HEAD/group/error/pumas_error_handler_set
@@ -221,7 +216,7 @@ Below is an example of context creation with the built-in pseudo random engine.
 The context is configured for an hybrid energy loss scheme without transverse
 transport, i.e. à la
 [MUM](https://journals.aps.org/prd/abstract/10.1103/PhysRevD.64.074015). For the
-sake of clarity errors are not handled.
+sake of clarity errors are handled by the default PUMAS error handler.
 {: .justify}
 
 
@@ -421,7 +416,7 @@ the simulation, if it is _fast enough_ to compute this distance.
     direction. When implementing a [`pumas_medium_cb`][MEDIUM_CB] one must take
     care to provide a *step* size accordingly, i.e. consistent with the geometry
     in both forward and backward modes (see e.g. the
-    [geometry.c](https://github.com/niess/pumas/blob/master/examples/geometry.c#L121)
+    [geometry.c](https://github.com/niess/pumas/blob/master/examples/pumas/geometry.c#L121)
     example).
     {: .justify}
 
