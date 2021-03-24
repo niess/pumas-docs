@@ -393,14 +393,17 @@ PUMAS is a pure transport engine. It does not provide geometric primitives, e.g.
 boxes, orbs, tubes, etc ... like [Geant4](http://geant4.cern.ch/). Instead it
 relies on a simple callback mechanism for describing the propagation media.  The
 user must supply a [`pumas_medium_cb`][MEDIUM_CB] telling the transport engine
-in which [`pumas_medium`][PUMAS_MEDIUM] it is currently located.  Returning a
+in which [`pumas_medium`][PUMAS_MEDIUM] it is currently located.  Providing a
 `NULL` medium indicates that the transported particle has exit the simulation
 geometry. In addition, the [`pumas_medium_cb`][MEDIUM_CB] callback provides also
 a maximum geometric stepping distance, typically the distance to the next
-boundary assuming a straight line propagation. Note that it is not critical to
-provide the exact value. The transport engine will run a bisection search if a
-change of medium is detected. However, providing the exact distance can speed up
-the simulation, if it is _fast enough_ to compute this distance.
+boundary assuming a straight line propagation. Finally the user must return a
+[`pumas_step`][PUMAS_STEP] enum indicating if the proposed step needs to be
+cross-checked by PUMAS or if it should be used raw. Managing steps that end on a
+geometry boundary can be tricky numerically. Therefore it is recommended to
+return `PUMAS_STEP_CHECK` if you are unsure of what to do since it is more
+robust. The raw mode is usefull if your geometry engine already performs those
+checks in order to avoid double work.
 {: .justify}
 
 !!! note
@@ -465,8 +468,9 @@ Below is an example of a uniform medium of infinite extension in PUMAS. Although
 this simple geometry might seem rather complicated to implement with PUMAS, this
 callback mechanism is however flexible enough in order to deal with more
 complicated geometries, e.g. a
-[non uniform atmosphere](https://github.com/niess/pumas/blob/master/examples/geometry.c#L92)
-as in the examples.
+[non uniform atmosphere](https://github.com/niess/pumas/blob/master/examples/pumas/geometry.c)
+as in the examples. Furthermore, using this callback mechanism existing geometry engines can be integrated with
+PUMAS (see e.g. the [Geant4 examples](https://github.com/niess/pumas/tree/master/examples/geant4)).
 {: .justify}
 
     /* A uniform medium without magnetic field. Note that we could also set the
@@ -501,15 +505,17 @@ as in the examples.
         if (step != NULL) /* Beware that `step` is `NULL` if not requested */
             *step = 0;
 
-        /* Notify PUMAS that the latter is an exact stepping distance not an
-         * estimate
+        /* Notify PUMAS that the returned step length should be used raw without
+         * further cross-checks. Note that for more complex geometries you might
+         * want to use `PUMAS_STEP_CHECK` instead which is more robust
          */
-        return PUMAS_STEP_EXACT;
+        return PUMAS_STEP_RAW;
     }
 
 [MEDIUM_CB]: api/index.html##HEAD/group/callback/pumas_medium_cb
 [LOCALS_CB]: api/index.html##HEAD/group/callback/pumas_locals_cb
 [PUMAS_MEDIUM]: api/index.html##HEAD/type/pumas_medium
+[PUMAS_STEP]: api/index.html##HEAD/type/pumas_step
 [API_13]: api/index.html##HEAD/group/physics/pumas_physics_material_index
 </div>
 
