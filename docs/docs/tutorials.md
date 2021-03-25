@@ -30,13 +30,15 @@ done in two ways:
 
         struct pumas_physics * physics;
         pumas_physics_create(&physics, PUMAS_PARTICLE_MUON,
-            "materials/mdf/examples/standard.xml", "materials/dedx/muon");
+            "materials/mdf/examples/standard.xml", "materials/dedx/muon", NULL);
 
     The 3<sup>nd</sup> argument to [`pumas_physics_create`][API_1] specifies the
     path to the MDF while the 4<sup>th</sup> one specifies the folder where
     energy loss tables are located. For the later, relative paths w.r.t. the MDF
     location can be given by prepending the path with an `@`. Ordinary paths are
-    assumed otherwise.
+    assumed otherwise. The 5<sup>th</sup> argument is optionnal. It can be left
+    empty for most applications (`NULL`) resulting in PUMAS using its default
+    physics setting ([see below](#tuning-the-physics) for more advanced usage).
     {: .justify}
 
 2.  From a binary dump, using the [`pumas_physics_load`][API_2] function, e.g.
@@ -198,6 +200,7 @@ allow to customise the transport:
 | **limit.distance**    | `double`                          | The maximum travelled distance, in m. {: .justify} |
 | **limit.grammage**    | `double`                          | The maximum travelled grammage, in kg/m^2. {: .justify} |
 | **limit.time**        | `double`                          | The maximum travelled proper time, in m/c. {: .justify} |
+| **accuracy**          | `double`                          | Tuning parameter for the accuracy of the Monte Carlo integration. The default value is 1E-02. {: .justify} |
 
 [PUMAS_MODE]: https://niess.github.io/pumas-docs/#HEAD/type/pumas_mode
 
@@ -433,9 +436,10 @@ magnetic field. Those are set by a [`pumas_locals_cb`][LOCALS_CB] callback and
 can vary **continuously** over the medium. The [`pumas_locals_cb`][LOCALS_CB]
 callback can be `NULL` in which case the material default density is used as
 defined in the MDF and the magnetic field is set to zero. If a `pumas_locals_cb`
-is provided then it must return a maximum stepping distance over which one can
-approximate the medium as uniform. Returning a value of zero or less indicates a
-uniform medium e.g. with a non standard density or with a magnetic field.
+is provided then it must return a length, in m, consistent with the size of the
+propagation medium inhomogeneities, e. g. $|\frac{\rho}{\nabla \rho}|$ for a
+density gradient. Returning a value of zero or less indicates a uniform medium
+but e.g. with a non standard density or with a magnetic field.
 {: .justify}
 
 !!! note
@@ -600,4 +604,54 @@ a log uniform sampling.
 
 [PUMAS_REF]: https://doi.org/10.1016/j.cpc.2018.04.001
 [IS]: https://en.wikipedia.org/wiki/Importance_sampling
+</div>
+
+
+<div markdown="1" class="shaded-box fancy">
+## Tuning the physics simulation
+
+By default PUMAS is configured in order to deliver accurate yet fast results for
+muography applications. But for specific use cases or in order to estimate
+systematics it can be relevant to modify PUMAS default settings. To do so there
+are three relevant parameters.
+{: .justify}
+
+-   First, one can provide alternative differential cross-sections (DCS) for
+    radiative energy loss processes, i.e. Bremsstrahlung, $e^+e^-$ pair
+    production and photonuclear interactions. This is done with the
+    [`pumas_physics_dcs_set`][API_15] function. Note that this must be done
+    before creating physics tables, e.g. with the
+    [`pumas_physics_create`][API_1] function. By default PUMAS follows [Groom et
+    al.](https://doi.org/10.1006/adnd.2001.0861) for the Bremsstrahlung and
+    $e^+e^-$ pair production cross-sections. But the DRSS cross-section ([Dutta
+    et al.](https://doi.org/10.1103/PhysRevD.63.094020)) is used for
+    photonuclear interactions  since is more accurate at high energies (see e.g.
+    [Sokalski _et al._](https://arxiv.org/abs/hep-ph/0201122)).
+    {: .justify}
+
+-   Then, when creating the physics as 5<sup>th</sup> argument one can also
+    specify a custom cutoff value, $x_\text{cut}$, between continuous energy
+    loss or discrete processes. By default PUMAS uses $x_\text{cut} = 5\%$ which
+    is a good compromise between speed and accuracy for the transport of a
+    continuous flux of $\mu$ (see e.g. [Sokalski et
+    al.](https://doi.org/10.1103/PhysRevD.64.074015) or [Koehne et
+    al.](https://doi.org/10.1016/j.cpc.2013.04.001)).
+    {: .justify}
+
+    !!! note
+        Modifying $x_\text{cut}$ only affects the `PUMAS_MODE_HYBRID` and
+        `PUMAS_MODE_DETAILED` energy loss modes. If CSDA is used then
+        $x_\text{cut}$ is forced to 100%, i.e. all losses are continuous.
+        {: .justify}
+
+-   Finally, the accuracy of the stepping can be controlled by modifying the
+    *accuracy* parameter of the simulation context. PUMAS uses a mixed Monte
+    Carlo algorithm ([Fernandez-Varea et
+    al.](https://doi.org/10.1016/0168-583X(93)95827-R)) for rendering the
+    multiple scattering, the magnetic bending etc. Lowering the accuracy
+    *parameter* results in shorter (more accurate) steps but at the cost of
+    extra CPU time.
+    {: .justify}
+
+[API_15]: api/index.html##HEAD/group/physics/pumas_physics_dcs_set
 </div>
