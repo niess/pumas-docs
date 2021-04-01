@@ -280,6 +280,16 @@ initialisation:
         .position = { 0., 0., 10. }
         .direction = { 0., 0., -1. } };
 
+!!! note
+    The example above uses C99 [designated
+    initializers](https://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html).
+    Note that unspecified fields are initialized to zero, e.g.  the travelled
+    *distance* or the *decayed* flag. When creating a new Monte Carlo state
+    please take care that all fields are properly initialised. In particular the
+    *decayed* flag must be zero (false) and the Monte Carlo *weight* strictly
+    positive.
+    {: .justify}
+
 !!! warning
     The state direction must be a unit vector otherwise PUMAS will return an
     error when attempting to transport the particle.
