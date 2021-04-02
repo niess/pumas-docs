@@ -618,7 +618,7 @@ a log uniform sampling.
 
 
 <div markdown="1" class="shaded-box fancy">
-## Tuning the physics simulation
+## Tuning the physics
 
 By default PUMAS is configured in order to deliver accurate yet fast results for
 muography applications. But for specific use cases or in order to estimate
@@ -628,22 +628,27 @@ are three relevant parameters.
 
 -   First, one can provide alternative differential cross-sections (DCS) for
     radiative energy loss processes, i.e. Bremsstrahlung, $e^+e^-$ pair
-    production and photonuclear interactions. This is done with the
-    [`pumas_physics_dcs_set`][API_15] function. Note that this must be done
-    before creating physics tables, e.g. with the
-    [`pumas_physics_create`][API_1] function. By default PUMAS follows [Groom et
-    al.](https://doi.org/10.1006/adnd.2001.0861) for the Bremsstrahlung and
-    $e^+e^-$ pair production cross-sections. But the DRSS cross-section ([Dutta
-    et al.](https://doi.org/10.1103/PhysRevD.63.094020)) is used for
-    photonuclear interactions  since is more accurate at high energies (see e.g.
-    [Sokalski _et al._](https://arxiv.org/abs/hep-ph/0201122)).
+    production and photonuclear interactions. This is done when creating physics
+    tables, e.g. with the [`pumas_physics_create`][API_1] function, by providing
+    a [`struct pumas_physics_settings`][PUMAS_PHYSICS_SETTINGS] as
+    5<sup>th</sup> argument. By default PUMAS follows [Groom et
+    al.](https://doi.org/10.1006/adnd.2001.0861) by using the Kelner, Kokoulin &
+    Petrukhin cross-sections for the Bremsstrahlung and $e^+e^-$ pair production
+    processes. However, for photonuclear interactions the DRSS cross-section
+    ([Dutta et al.](https://doi.org/10.1103/PhysRevD.63.094020)) is used instead
+    of the Bezrukov & Bugaev DCS from 1981. The former is more accurate at
+    high energies (see e.g.  [Sokalski _et
+    al._](https://arxiv.org/abs/hep-ph/0201122)). Note that an updated version
+    of the Bezrukov & Bugaev photonuclear cross-section (`"BBKM"`) is also
+    available in PUMAS.
     {: .justify}
 
--   Then, when creating the physics as 5<sup>th</sup> argument one can also
-    specify a custom cutoff value, $x_\text{cut}$, between continuous energy
-    loss or discrete processes. By default PUMAS uses $x_\text{cut} = 5\%$ which
-    is a good compromise between speed and accuracy for the transport of a
-    continuous flux of $\mu$ (see e.g. [Sokalski et
+-   When creating the physics tables with a
+    [`struct pumas_physics_settings`][PUMAS_PHYSICS_SETTINGS] as 5<sup>th</sup>
+    argument one can also specify a custom cutoff value, $x_\text{cut}$, between
+    continuous energy loss or discrete processes. By default PUMAS uses
+    $x_\text{cut} = 5\%$ which is a good compromise between speed and accuracy
+    for the transport of a continuous flux of $\mu$ (see e.g. [Sokalski et
     al.](https://doi.org/10.1103/PhysRevD.64.074015) or [Koehne et
     al.](https://doi.org/10.1016/j.cpc.2013.04.001)).
     {: .justify}
@@ -663,5 +668,5 @@ are three relevant parameters.
     extra CPU time.
     {: .justify}
 
-[API_15]: api/index.html##HEAD/group/physics/pumas_physics_dcs_set
+[PUMAS_PHYSICS_SETTINGS]: api/index.html##HEAD/type/pumas_physics_settings
 </div>
