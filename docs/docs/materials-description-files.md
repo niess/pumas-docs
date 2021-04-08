@@ -33,12 +33,6 @@ attributes:
 | **I**     | Float  | eV    | Mean excitation energy. |
 
 See e.g. [domite.xml#L6](https://github.com/niess/pumas-materials/blob/master/mdf/examples/domite.xml#L6).
-
-!!!note
-    The Mean Excitation Energy (MEE) must be provided at the atom level. It is
-    used by PUMAS for simulating Discrete Energy Losses (DELs) for the
-    ionisation process.
-    {: .justify}
 </div>
 
 
@@ -49,13 +43,19 @@ The `<material>` tag allows to build a new material as a collection of atomic
 `<element>`'s. It has the following attributes:
 {: .justify}
 
-| Attribute   | Type   | Unit             | Description       |
-|:-----------:|:------:|:----------------:|:-----------------:|
-| **name**    | String |                  | Material name.    |
-| **file**    | String |                  | Energy loss file. |
-| **density** | Float  | g/cm<sup>3</sup> | Material density. |
+| Attribute   | Type   | Unit             | Description             |
+|:-----------:|:------:|:----------------:|:-----------------------:|
+| **name**    | String |                  | Material name.          |
+| **file**    | String |                  | Energy loss file.       |
+| **density** | Float  | g/cm<sup>3</sup> | Material density.       |
+| **I**       | Float  | eV               | Mean excitation energy. |
 
 See e.g. [domite.xml#16](https://github.com/niess/pumas-materials/blob/master/mdf/examples/domite.xml#L16).
+
+!!! note
+    The Mean excitation energy (I) is optionnal for a material. If not provided
+    then it is estimated from atomic components assuming Bragg additivity.
+    {: .justify}
 
 !!! note
     The energy loss file **must** conform to the
