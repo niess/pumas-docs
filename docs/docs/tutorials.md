@@ -7,7 +7,21 @@ directly browse the
 [examples](https://github.com/niess/pumas/tree/master/examples).
 {: .justify}
 
-!!! warning
+!!! warning "Units"
+    All the PUMAS library functions use [SI
+    units](https://en.wikipedia.org/wiki/International_System_of_Units). E.g.
+    positions and distances are expressed in $m$, densities in $kg/m^3$.  There
+    is one exception however, particles energy (loss) and rest mass
+    are given in $GeV$ and $GeV / c^2$.
+    {: .justify}
+
+    The [Materials Description Files](materials-description-files.md) (MDFs) and
+    the [energy loss tables](energy-loss-tables.md) however use differents units
+    depending on the quantity of interest. E.g. densities are expressed in
+    $g/cm^3$ and Mean Excitation Energies (MEE) in $eV$.
+    {: .justify}
+
+!!! note
     The tutorials and examples require a specific [Materials Description
     File](materials-description-files.md) located in the PUMAS repository under
     [examples/data/materials.xml](https://github.com/niess/pumas/blob/master/examples/data/materials.xml).
@@ -471,7 +485,7 @@ but e.g. with a non standard density or with a magnetic field.
     even though they have the same material.
     {: .justify}
 
-!!! notr
+!!! note
     The `pumas_locals_cb` should not be used to model a non continuous density
     or magnetic field. Instead this must be modelled by using separate media on
     both sides of the discontinuity.
