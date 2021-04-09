@@ -41,20 +41,25 @@ done in two ways:
 
         struct pumas_physics * physics;
         pumas_physics_create(&physics, PUMAS_PARTICLE_MUON,
-            "examples/data/materials.xml", "examples/data", NULL);
+            "examples/data/materials.xml", NULL, NULL);
 
     The 3<sup>nd</sup> argument to [`pumas_physics_create`][API_1] specifies the
-    path to the MDF. The 4<sup>th</sup> argument indicates a folder where
-    [energy loss tables](energy-loss-tables.md) are looked-for and/or generated
-    to.  Relative paths w.r.t. the MDF location can be given by prepending the
-    path with an `@`. Ordinary paths are assumed otherwise. This argument can
-    also be left `NULL` in which case the current working directory is used.
+    path to the MDF.
     {: .justify}
 
     !!! note
-        The 5<sup>th</sup> argument to [`pumas_physics_create`][API_1] is
-        optionnal.  It can be left empty for most applications (`NULL`)
-        resulting in PUMAS using its default physics settings ([see
+        The 4<sup>th</sup> and 5<sup>th</sup> arguments to
+        [`pumas_physics_create`][API_1] are optionnal. The 4<sup>th</sup>
+        argument allows to indicates a folder where [energy loss
+        tables](energy-loss-tables.md) are looked-for and/or generated to.
+        Relative paths w.r.t. the MDF location can be given by prepending the
+        path with an `@`. Ordinary paths are assumed otherwise. This argument
+        can also be left `NULL` in which case directory containing the MDF is
+        used.
+        {: .justify}
+
+        The 5<sup>th</sup> argument can be left empty for most applications
+        (`NULL`) resulting in PUMAS using its default physics settings ([see
         below](#tuning-the-physics) for more advanced usage).
         {: .justify}
 
@@ -108,7 +113,7 @@ file.
         /* Initialise PUMAS physics from a MDF */
         struct pumas_physics * physics;
         pumas_physics_create(&physics, PUMAS_PARTICLE_MUON,
-            "examples/data/materials.xml", "examples/data");
+            "examples/data/materials.xml", NULL, NULL);
 
         /* Dump the materials data to a binary file */
         FILE * fid = fopen("examples/data/materials.pumas", "wb+");
@@ -253,7 +258,7 @@ sake of clarity errors are handled by the default PUMAS error handler.
         /* Initialise the physics from a MDF */
         struct pumas_physics * physics;
         pumas_physics_create(&physics, PUMAS_PARTICLE_MUON,
-            "examples/data/materials.xml", "examples/data", NULL);
+            "examples/data/materials.xml", NULL, NULL);
 
         /* Create a new simulation context */
         struct pumas_context * context = NULL;
