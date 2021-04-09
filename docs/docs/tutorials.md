@@ -8,13 +8,10 @@ directly browse the
 {: .justify}
 
 !!! warning
-    The tutorials and examples require specific [Materials Description
-    Files](materials-description-files.md) and
-    [energy loss tables](energy-loss-tables.md). Those can be downloaded with
-    git, e.g. as:
+    The tutorials and examples require a specific [Materials Description
+    File](materials-description-files.md) located in the PUMAS repository under
+    [examples/data/materials.xml](https://github.com/niess/pumas/blob/master/examples/data/materials.xml).
     {: .justify}
-
-        git clone https://gitub.com/niess/pumas-materials materials
 
 
 <div markdown="1" class="shaded-box fancy">
@@ -24,38 +21,49 @@ Prior to any usage physics tables must be initialised. This can be
 done in two ways:
 {: .justify}
 
-1.  From a **M**aterials **D**escription **F**ile
+1.  PUMAS physics can be created from a **M**aterials **D**escription **F**ile
     ([MDF](materials-description-files.md)), using the
     [`pumas_physics_create`][API_1] function, e.g. as:
 
         struct pumas_physics * physics;
         pumas_physics_create(&physics, PUMAS_PARTICLE_MUON,
-            "materials/mdf/examples/standard.xml", "materials/dedx/muon", NULL);
+            "examples/data/materials.xml", "examples/data", NULL);
 
     The 3<sup>nd</sup> argument to [`pumas_physics_create`][API_1] specifies the
-    path to the MDF while the 4<sup>th</sup> one specifies the folder where
-    energy loss tables are located. For the later, relative paths w.r.t. the MDF
-    location can be given by prepending the path with an `@`. Ordinary paths are
-    assumed otherwise. The 5<sup>th</sup> argument is optionnal. It can be left
-    empty for most applications (`NULL`) resulting in PUMAS using its default
-    physics setting ([see below](#tuning-the-physics) for more advanced usage).
+    path to the MDF. The 4<sup>th</sup> argument indicates a folder where
+    [energy loss tables](energy-loss-tables.md) are looked-for and/or generated
+    to.  Relative paths w.r.t. the MDF location can be given by prepending the
+    path with an `@`. Ordinary paths are assumed otherwise. This argument can
+    also be left `NULL` in which case the current working directory is used.
     {: .justify}
 
-2.  From a binary dump, using the [`pumas_physics_load`][API_2] function, e.g.
-    as:
+    !!! note
+        The 5<sup>th</sup> argument to [`pumas_physics_create`][API_1] is
+        optionnal.  It can be left empty for most applications (`NULL`)
+        resulting in PUMAS using its default physics settings ([see
+        below](#tuning-the-physics) for more advanced usage).
+        {: .justify}
+
+2.  PUMAS physics can also be loaded from a binary dump using the
+    [`pumas_physics_load`][API_2] function, e.g.  as:
     {: .justify}
 
         struct pumas_physics * physics;
         pumas_physics_load(&physics, "materials/dump");
 
-When the physics is initialised from a MDF, PUMAS will pre-compute and tabulate
+When the physics is initialised from a MDF, PUMAS pre-computes and tabulates
 properties for **all** the materials defined in the file. Should there be latter
-used or not. This step can last several seconds, depending on the number of
-materials defined and on your machine performances. Once done, a binary dump of
-the low level PUMAS data can be generated with the [`pumas_physics_dump`][API_3]
-function. Initialising the physics from such a binary dump is much faster. Note
-however that the dump format is OS and machine dependent. Therefore, it is safer
-to use MDFs as an exchange format for the material properties.
+used or not. During this operation intermediary [energy loss
+tables](energy-loss-tables.md) are generated in the
+[PDG](https://pdg.lbl.gov/2020/AtomicNuclearProperties/index.html) format.
+These files can be browsed using a text editor, e.g. in order to cross-check the
+generated physics.  Fully tabulating the physics can last several seconds
+depending on the number of materials defined and on your machine performances.
+Once done, a binary dump of the low level PUMAS data can be generated with the
+[`pumas_physics_dump`][API_3] function. Initialising the physics from such a
+binary dump is much faster. Note however that the dump format is OS and machine
+dependent. Therefore, it is safer to use MDFs as an exchange format for the
+material properties.
 {: .justify}
 
 !!! note
@@ -63,7 +71,7 @@ to use MDFs as an exchange format for the material properties.
     [examples/pumas/loader.c](https://github.com/niess/pumas/blob/master/examples/pumas/loader.c)
     provides an example of physics smart initialisation. The initialisation is
     done with [`pumas_physics_load`][API_2] if a binary dump is found. Otherwise
-    the initialisation is done from a MDF, using
+    the initialisation is done from a MDF using
     [`pumas_physics_create`][API_1].  In the later case, a binary dump is
     generated, with [`pumas_physics_dump`][API_3] in order to speed up further
     initialisations.
@@ -75,8 +83,8 @@ re-initialise (load) the physics again.
 {: .justify}
 
 To sum up, the following code is an elementary program using the PUMAS library.
-It computes the low level material tables used by PUMAS and dumps them to a
-binary file.
+It computes the low level material data used by PUMAS and dumps them to a binary
+file.
 {: .justify}
 
     #include "pumas.h"
@@ -86,10 +94,10 @@ binary file.
         /* Initialise PUMAS physics from a MDF */
         struct pumas_physics * physics;
         pumas_physics_create(&physics, PUMAS_PARTICLE_MUON,
-            "materials/mdf/standard.xml", "materials/dedx/muon");
+            "examples/data/materials.xml", "examples/data");
 
-        /* Dump the physics to a binary file */
-        FILE * fid = fopen("materials/dump", "wb+");
+        /* Dump the materials data to a binary file */
+        FILE * fid = fopen("examples/data/materials.pumas", "wb+");
         pumas_physics_dump(physics, fid);
         fclose(fid);
 
@@ -231,7 +239,7 @@ sake of clarity errors are handled by the default PUMAS error handler.
         /* Initialise the physics from a MDF */
         struct pumas_physics * physics;
         pumas_physics_create(&physics, PUMAS_PARTICLE_MUON,
-            "materials/mdf/examples/standard.xml", "materials/dedx/muon", NULL);
+            "examples/data/materials.xml", "examples/data", NULL);
 
         /* Create a new simulation context */
         struct pumas_context * context = NULL;
