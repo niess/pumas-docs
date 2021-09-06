@@ -23,7 +23,7 @@ cloning the PUMAS repository as:
 ```bash
 git clone https://github.com/niess/pumas && cd pumas && make
 ```
-This will build PUMAS as a shared library (in `lib/libpumas.so`).
+This will build PUMAS locally as a shared library (in `lib/libpumas.so`).
 In addition, the examples can be built in the `bin` directory by further
 issuing `make examples`.
 {: .justify}
@@ -38,13 +38,37 @@ provided
 [CMakeLists.txt](https://github.com/niess/pumas/blob/master/CMakeLists.txt).
 Instructions for running cmake on Windows and UNIX platforms are provided on the
 [CMake website](https://cmake.org/runningcmake/). The following PUMAS specific
-build options are available:
+build options are listed below. Note that depending on your system not all
+options might be available.
+{: .justify}
+
+| Option | Default | System | Description |
+|--------|---------|--------|-------------|
+|`PUMAS_BUILD_EXAMPLES`|`FALSE`| `ALL`  | Build the PUMAS examples. {: .justify}|
+|`PUMAS_BUILD_TEST`    |`FALSE`| `LINUX`| Build the PUMAS test suite. {: .justify}|
+|`PUMAS_USE_GDB`       |`FALSE`| `UNIX` | Enable specific options for debuging with `gdb`. {: .justify}|
+
+In addition, the following standard CMake options might be relevant:
 {: .justify}
 
 | Option | Default | Description |
 |--------|---------|-------------|
-|`BUILD_SHARED_LIBS`   |`TRUE` |Build PUMAS as a shared library. Set to `FALSE` in order to build PUMAS as a static library instead. {: .justify}|
-|`PUMAS_BUILD_EXAMPLES`|`FALSE`|Build the examples under `bin`. {: .justify}|
-|`PUMAS_BUILD_TEST`    |`FALSE`|Build the test suite. {: .justify}|
-|`PUMAS_USE_GDB`       |`FALSE`|Enable specific options for debuging with `gdb` on UNIX systems. {: .justify}|
+|`BUILD_SHARED_LIBS`   |`TRUE`        | Build PUMAS as a shared library. Set to `FALSE` in order to build PUMAS as a static library instead. {: .justify}|
+|`CMAKE_BUILD_TYPE`    |`Release`     | Specify the build type, one of `Debug`, `Release`, `RelWithDebInfo` or `MinSizeRel`. {: .justify}|
+|`CMAKE_INSTALL_PREFIX`|_OS dependent_| Prefix path for the installation of the PUMAS library and of the examples. |
+
+For examples, on Unix systems the following builds and installs the PUMAS
+library and the examples locally, in-source:
+{: .justify}
+```bash
+# Clone the PUMAS library and set a build directory
+git clone https://github.com/niess/pumas && mkdir pumas/build && cd pumas/build
+
+# Configure the build with CMake for `in-source` installation
+cmake .. -DCMAKE_INSTALL_PREFIX=$(pwd)/.. -DPUMAS_BUILD_EXAMPLES=true
+
+# Compile and install PUMAS
+make && make install
+```
+
 </div>
