@@ -8,7 +8,13 @@
     *Visual Studio* on Windows.
     {: .justify}
 
-In the following we provide detailed instructions for building PUMAS as a
+!!! warning
+    It is assumed that the user already knows how to use a C compiler and how
+    to install software from source on its own Operating System (OS). If not,
+    please first check the apropriate documentation.
+    {: .justify}
+
+In the following we provide some specific details for building PUMAS as a
 standalone library as well as for building the examples.
 {: .justify}
 
@@ -23,9 +29,9 @@ cloning the PUMAS repository as:
 ```bash
 git clone https://github.com/niess/pumas && cd pumas && make
 ```
-This will build PUMAS locally as a shared library (in `lib/libpumas.so`).
-In addition, the examples can be built in the `bin` directory by further
-issuing `make examples`.
+This will build PUMAS locally (_in-source_) as a shared library:
+`lib/libpumas.so`.  In addition, the examples can be built in the `bin`
+directory by further issuing `make examples`.
 {: .justify}
 </div>
 
@@ -38,8 +44,8 @@ provided
 [CMakeLists.txt](https://github.com/niess/pumas/blob/master/CMakeLists.txt).
 Instructions for running cmake on Windows and UNIX platforms are provided on the
 [CMake website](https://cmake.org/runningcmake/). The following PUMAS specific
-build options are listed below. Note that depending on your system not all
-options might be available.
+build options are listed below. Note that depending on your system some
+options might not be available.
 {: .justify}
 
 | Option | Default | System | Description |
@@ -58,7 +64,7 @@ In addition, the following standard CMake options might be relevant:
 |`CMAKE_INSTALL_PREFIX`|_OS dependent_| Prefix path for the installation of the PUMAS library and of the examples. |
 
 For examples, on Unix systems the following builds and installs the PUMAS
-library and the examples locally, in-source:
+library and the examples locally, _in-source_:
 {: .justify}
 ```bash
 # Clone the PUMAS library and set a build directory

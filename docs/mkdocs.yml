@@ -13,7 +13,7 @@ nav:
   - PUMAS API: api/
   - Materials:
     - Materials Description Files: materials-description-files.md
-    - Energy loss tables: energy-loss-tables.md
+    - Stopping power tables: stopping-power-tables.md
 
 theme:
   name: readthedocs
