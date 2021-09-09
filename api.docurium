@@ -6,6 +6,6 @@
     "logo": ["images/pumas-black.png", "http://niess.github.io/pumas-pages"],
     "prefix": "pumas_",
     "output-repository": "docs",
-    "output-branch": "master",
-    "output-path": "docs/docs/api"
+    "output-path": "docs/docs/api",
+    "commit-message": "Update the API docs"
 }
