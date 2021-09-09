@@ -1,10 +1,9 @@
 # Materials Description Files
 
 In PUMAS, material properties  are encoded in XML within a **M**aterials
-**D**escription **F**ile (**MDF**). A compilation of materials data can be found
-in a separate repository:
-[pumas-materials](https://github.com/niess/pumas-materials). Below is a
-description of the XML tags recognised by PUMAS.
+**D**escription **F**ile (**MDF**). A compilation of MDFs is available from the
+[pumas-materials](https://github.com/niess/pumas-materials) repository. Below is
+a description of the XML tags recognised by PUMAS.
 {: .justify}
 
 
