@@ -715,6 +715,11 @@ are three relevant parameters.
         $x_\text{cut}$ is forced to 100%, i.e. all losses are continuous.
         {: .justify}
 
+    !!! warning
+        In backward mode, with mixed or straggled energy loss, cutoff values
+        lower than 1% ($x_\text{cut} < 1\%$) are not currently supported.
+        {: .justify}
+
 -   Finally, the accuracy of the Monte Carlo stepping can be modified with the
     *accuracy* parameter of the simulation context. PUMAS uses a mixed Monte
     Carlo algorithm ([Fernandez-Varea et
