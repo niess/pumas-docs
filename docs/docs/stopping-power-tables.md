@@ -26,8 +26,8 @@ soft energy loss, CSDA range, etc. The generated tables conform to the
 A compilation of stopping power table computed with PUMAS is available from the
 [pumas-materials](https://github.com/niess/pumas-materials) repository.  It is
 also possible to use the original PDG stopping power tables instead of PUMAS one
-by substituting (overwriting) the PUMAS generated ones. Yet, PUMAS tables are
-more accurate than the PDG ones at high energy due to improvements on the
+by substituting (overwriting) the PUMAS generated ones. However, PUMAS tables
+are more accurate than the PDG ones at high energy due to improvements on the
 cross-sections of radiative processes (see e.g.  [Sandrock _et
 al._](https://iopscience.iop.org/article/10.1088/1742-6596/1690/1/012005)).
 {: .justify}

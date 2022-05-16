@@ -38,8 +38,8 @@ See e.g. [domite.xml#L6](https://github.com/niess/pumas-materials/blob/master/md
 <div markdown="1" class="shaded-box fancy">
 ## The `<material>` tag
 
-The `<material>` tag allows to build a new material as a collection of atomic
-`<element>`'s. It has the following attributes:
+The `<material>` tag allows one to build a new material as a collection of
+atomic `<element>`'s. It has the following attributes:
 {: .justify}
 
 | Attribute   | Type   | Unit             | Description             |

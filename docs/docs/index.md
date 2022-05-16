@@ -1,9 +1,9 @@
 # Introduction
 
-The PUMAS library allows to transport muon or tau leptons by forward or backward
-Monte Carlo. The library is written in C99 with the standard library as sole
-dependency. PUMAS is thread safe by design. The library also allows to generate
-stopping power tables in the Particle Data Group
+The PUMAS library allows one to transport muon or tau leptons by forward or
+backward Monte Carlo. The library is written in C99 with the standard library as
+sole dependency. PUMAS is thread safe by design. PUMAS can also be used in order
+to generate stopping power tables in the Particle Data Group
 ([PDG](https://pdg.lbl.gov/2020/AtomicNuclearProperties/index.html)) format. A
 compilation of tables generated with PUMAS is available from the
 [pumas-materials](https://github.com/niess/pumas-materials) repository.
@@ -26,7 +26,7 @@ PUMAS physics results have been carefully validated through various tests
 including comparison to other Monte Carlo engines. Updates are unit tested using
 [GitHub
 CI](https://docs.github.com/en/actions/guides/about-continuous-integration).
-Yet, PUMAS is a software and bugs happen. Whenever you were (un)lucky to come
+However, PUMAS is software and bugs happen. Whenever you were (un)lucky to come
 accross one, please consider reporting it as a [GitHub
 issue](https://github.com/niess/pumas/issues).
 {: .justify}

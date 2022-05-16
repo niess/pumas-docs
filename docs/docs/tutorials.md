@@ -50,7 +50,7 @@ done in two ways:
     !!! note
         The 4<sup>th</sup> and 5<sup>th</sup> arguments to
         [`pumas_physics_create`][API_1] are optionnal. The 4<sup>th</sup>
-        argument allows to indicates a folder where [stopping power
+        argument allows one to indicate a folder where [stopping power
         tables](stopping-power-tables.md) are looked-for and/or generated to.
         Relative paths w.r.t. the MDF location can be given by prepending the
         path with an `@`. Ordinary paths are assumed otherwise. This argument
@@ -222,7 +222,7 @@ can be done at the context creation by reserving additional memory for them.
 
 A simulation stream can be configured directly by modifying the
 [`pumas_context`][PUMAS_CONTEXT] data. In particular the following flags
-allow to customise the transport:
+allow one to customise the transport:
 {: .justify}
 
 | name | type | description |
@@ -447,8 +447,8 @@ This mechanism is decribed in the following.
 {: .justify}
 
 !!! note
-    The callback mechanism of PUMAS allows to interface external ray tracers.
-    For example, PUMAS can navigate through a GDML geometry with a
+    The callback mechanism of PUMAS allows one to interface external ray
+    tracers. For example, PUMAS can navigate through a GDML geometry with a
     [Geant4](https://geant4.web.cern.ch) `G4Navigator`. The
     [TURTLE](https://niess.github.io/turtle-pages/) library can be used as well
     in order to efficiently step through topography data.  Examples of these use
@@ -595,8 +595,8 @@ engines can be integrated with PUMAS.
 <div markdown="1" class="shaded-box fancy">
 ## Practical Backward Monte-Carlo and weights
 
-In Backward Monte-Carlo (BMC) mode PUMAS allows to compute a point estimate of
-the muon (tau) flux for a given final state, see e.g. _lemma 1_ of the
+In Backward Monte-Carlo (BMC) mode PUMAS allows one to compute a point estimate
+of the muon (tau) flux for a given final state, see e.g. _lemma 1_ of the
 [Backward Monte Carlo paper][PUMAS_REF]. In order to sample a distribution of
 final states, one relies on _corollary 4_. I.e. the final states are generated
 over a bias distribution as for classical [Importance Sampling][IS].  In
