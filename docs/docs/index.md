@@ -31,17 +31,20 @@ accross one, please consider reporting it as a [GitHub
 issue](https://github.com/niess/pumas/issues).
 {: .justify}
 
-## Reference
+## References
 
-If you consider citing PUMAS please use the following reference:
-[doi:10.1016/j.cpc.2018.04.001](https://doi.org/10.1016/j.cpc.2018.04.001).
-Note that the corresponding paper is also available from arXiv as a
-[preprint](https://arxiv.org/abs/1705.05636).
+A detailed description of the PUMAS library, of its physics, its implementation
+and its validation, is published in Computer Physics Communications, as
+[10.1016/j.cpc.2022.108438](https://doi.org/10.1016/j.cpc.2022.108438)
+([2206.01457](https://arxiv.org/abs/2206.01457)). The backward Monte Carlo
+method is specifically discussed in
+[10.1016/j.cpc.2018.04.001](https://doi.org/10.1016/j.cpc.2018.04.001)
+([1705.05636](https://arxiv.org/abs/1705.05636)).
 {: .justify}
 
 ## Logo
 
-For more pictorial citations, the following logos could be used:
+For more pictorial citations, the following logos could be used.
 
 | ![Logo](img/logo-gradient.png) | ![Logo](img/logo-black.png) |
 |:-:|:-:|
