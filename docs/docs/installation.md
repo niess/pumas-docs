@@ -77,4 +77,10 @@ cmake .. -DCMAKE_INSTALL_PREFIX=$(pwd)/.. -DPUMAS_BUILD_EXAMPLES=true
 make && make install
 ```
 
+!!! tip
+    Once PUMAS has been installed with CMake, then it can be used as a CMake
+    package in other projects, with the `find_package` command. See e.g. this
+    [CMakeLists.txt example](https://github.com/niess/pumas/blob/master/examples/cmake/CMakeLists.txt).
+    {: .justify}
+
 </div>
