@@ -81,7 +81,7 @@ can last several seconds depending on the number of materials defined and on
 your machine performances.
 {: .justify}
 
-Once the physics has been created, is can be saved in binary format with the
+Once the physics has been created, it can be saved in binary format with the
 [`pumas_physics_dump`][API_3] function. Initialising the physics from such a
 binary dump is much faster. However, the dump is a low level representation of
 the physics depending on the machine and OS used. Thus, it is safer to use MDFs
@@ -90,7 +90,7 @@ as an exchange format rather than binary dumps.
 
 !!! note
     The files [examples/pumas/tabulate.c](https://github.com/niess/pumas/blob/master/examples/pumas/tabulate.c)
-    and [examples/pumas/tabulate.c](https://github.com/niess/pumas/blob/master/examples/pumas/deump.c)
+    and [examples/pumas/tabulate.c](https://github.com/niess/pumas/blob/master/examples/pumas/dump.c)
     provide examples of generating stopping power tables with PUMAS or of saving
     the physics in binary format.
     {: .justify}
@@ -232,7 +232,7 @@ allow one to customise the transport:
 | **mode.direction**    | [enum pumas\_mode][PUMAS_MODE]    | Direction of the Monte Carlo flow. Default is `PUMAS_MODE_FORWARD`. Set this to `PUMAS_MODE_BACKWARD` for a reverse Monte Carlo. {: .justify} |
 | **mode.scattering**   | [enum pumas\_mode][PUMAS_MODE]    | Algorithm for the simulation of the scattering. Default is `PUMAS_MODE_MIXED`. In order to neglect any transverse scattering set this to `PUMAS_MODE_DISABLED` instead. {: .justify} |
 | **event**             | [`enum pumas_event`][PUMAS_EVENT] | The end conditions for the transport. Default is `PUMAS_EVENT_NONE`. {: .justify} |
-| **limit.energy**      | `double`                          | The menergykinetic energy for forward transport, or the maximum one for backward transport, in GeV. {: .justify} |
+| **limit.energy**      | `double`                          | The minimum kinetic energy for forward transport, or the maximum one for backward transport, in GeV. {: .justify} |
 | **limit.distance**    | `double`                          | The maximum travelled distance, in m. {: .justify} |
 | **limit.grammage**    | `double`                          | The maximum travelled grammage, in kg/m^2. {: .justify} |
 | **limit.time**        | `double`                          | The maximum travelled proper time, in m/c. {: .justify} |
@@ -604,11 +604,11 @@ practice, the procedure can be described as below:
 {: .justify}
 
 1.  At generation the particle weight is initialised to $\omega = \frac{1}{
-    \text{PDF}_\text{gen}}$, where $\text{PDF}_\tex{gen}$ is the generation PDF.
-    Let say that one generates final states over a surface of interest and with
-    some solid angle of aperture but at a fixed energy. Then $\text{PDF}_{gen}$
-    could be in units $\text{m}^{-2}\text{sr}^{-1}$.  Following the weight would
-    start with unit $\text{m}^2\text{sr}$.
+    \text{PDF}_\text{gen}}$, where $\text{PDF}_\text{gen}$ is the generation
+    PDF. Let say that one generates final states over a surface of interest and
+    with some solid angle of aperture but at a fixed energy. Then
+    $\text{PDF}_\text{gen}$ could be in units $\text{m}^{-2}\text{sr}^{-1}$.
+    Following the weight would start with unit $\text{m}^2\text{sr}$.
     {: .justify}
 
 2.  The backward propagation modifies the weight by a unitless Jacobian factor,
@@ -696,7 +696,7 @@ are three relevant parameters.
     interactions the DRSS cross-section ([Dutta et
     al.](https://doi.org/10.1103/PhysRevD.63.094020)) is used. Alternative
     models available in PUMAS are described in the [API
-    documentation](PUMAS_PHYSICS_SETTINGS).
+    documentation][PUMAS_PHYSICS_SETTINGS].
     {: .justify}
 
 -   When creating the physics tables with a
